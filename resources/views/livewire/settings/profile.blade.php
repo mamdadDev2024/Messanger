@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 use Livewire\Volt\Component;
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
+use Jantinnerezo\LivewireAlert\Enums\Position;
 
 new class extends Component {
     public string $name = '';
@@ -15,6 +17,11 @@ new class extends Component {
      */
     public function mount(): void
     {
+        LivewireAlert::title('Changes saved!')
+            ->toast()
+            ->position(Position::TopEnd)
+            ->success()
+            ->show();
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
     }

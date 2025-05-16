@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Conversation;
+use App\Models\Message;
+use App\Models\User;
+use App\Observers\UserObServer;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Message::observe(Message::class);
+        Conversation::observe(Conversation::class);
+        User::observe(UserObServer::class);
     }
 }

@@ -7,11 +7,11 @@
     },
     "dependencies": {
         "@tailwindcss/vite": "^4.0.7",
-        "autoprefixer": "^10.4.20",
         "axios": "^1.7.4",
         "concurrently": "^9.0.1",
         "laravel-vite-plugin": "^1.0",
-        "tailwindcss": "^4.0.7",
+        "sweetalert2": "^11.21.0",
+        "talkjs": "^0.37.0",
         "vite": "^6.0"
     },
     "optionalDependencies": {
@@ -20,7 +20,10 @@
         "lightningcss-linux-x64-gnu": "^1.29.1"
     },
     "devDependencies": {
+        "autoprefixer": "^10.4.21",
         "laravel-echo": "^2.1.4",
-        "pusher-js": "^8.4.0"
+        "postcss": "^8.5.3",
+        "pusher-js": "^8.4.0",
+        "tailwindcss": "^4.1.7"
     }
 }
