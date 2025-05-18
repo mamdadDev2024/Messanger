@@ -21,7 +21,7 @@ class MessagePolicy
      */
     public function view(User $user, Message $message): bool
     {
-        return false;
+        return $message->accessToMessage($user);
     }
 
     /**
@@ -37,7 +37,7 @@ class MessagePolicy
      */
     public function update(User $user, Message $message): bool
     {
-        return $user->id === $message->user_id;
+        return $message->IsMine($user);
     }
 
     /**
@@ -45,7 +45,7 @@ class MessagePolicy
      */
     public function delete(User $user, Message $message): bool
     {
-        return $user->id === $message->user_id || in_array($user->id , $message->conversation->pari);
+        return $message->canDelete($user);
     }
 
     /**
@@ -53,7 +53,7 @@ class MessagePolicy
      */
     public function restore(User $user, Message $message): bool
     {
-        return false;
+        return $message->canDelete($user);
     }
 
     /**
@@ -61,6 +61,6 @@ class MessagePolicy
      */
     public function forceDelete(User $user, Message $message): bool
     {
-        return false;
+        return $message->canDelete($user);
     }
 }

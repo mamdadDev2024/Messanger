@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-@source "../**/*.blade.php";
-@source "../**/*.js";
 @source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
 @source "../../storage/framework/views/*.php";
 
@@ -10,4 +8,71 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+@font-face {
+    font-family: 'Vazir';
+    src: url('/fonts/Vazir.woff2') format('woff2'),
+        url('/fonts/Vazir.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+html {
+    font-family: 'Vazir', Tahoma, Arial, sans-serif;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+:root {
+    --color-bg-light: #fdfdfc;
+    --color-text-light: #1b1b18;
+    --color-primary-hover: #1e40af;
+    --transition-speed: 0.3s;
+}
+
+body {
+    background-color: var(--color-bg-light);
+    color: var(--color-text-light);
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+    min-height: 100vh;
+    line-height: 1.6;
+    padding: 1rem;
+}
+
+body.dark {
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-dark);
+}
+
+a, button {
+    cursor: pointer;
+    transition: color var(--transition-speed), background-color var(--transition-speed);
+    outline-offset: 2px;
+}
+
+a:hover, button:hover, a:focus, button:focus {
+    color: var(--color-primary-hover);
+    outline: none;
+    text-decoration: underline;
+}
+
+main {
+    max-width: 100%;
+    padding: 0 1rem;
+    margin: 0 auto;
+    flex: 1 1 auto;
+}
+
+.flex > * {
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 1024px) {
+    main {
+    max-width: 900px;
+    }
+    .flex > * {
+    margin-bottom: 0;
+    }
 }

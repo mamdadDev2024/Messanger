@@ -13,7 +13,7 @@ class ConversationPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +21,7 @@ class ConversationPolicy
      */
     public function view(User $user, Conversation $conversation): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +29,7 @@ class ConversationPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -37,7 +37,7 @@ class ConversationPolicy
      */
     public function update(User $user, Conversation $conversation): bool
     {
-        return false;
+        return $conversation->isOwner($user);
     }
 
     /**
@@ -45,7 +45,7 @@ class ConversationPolicy
      */
     public function delete(User $user, Conversation $conversation): bool
     {
-        return false;
+        return $conversation->isOwner($user);
     }
 
     /**
@@ -53,7 +53,7 @@ class ConversationPolicy
      */
     public function restore(User $user, Conversation $conversation): bool
     {
-        return false;
+        return $conversation->isOwner($user);
     }
 
     /**
@@ -61,6 +61,6 @@ class ConversationPolicy
      */
     public function forceDelete(User $user, Conversation $conversation): bool
     {
-        return false;
+        return $conversation->isOwner($user);
     }
 }

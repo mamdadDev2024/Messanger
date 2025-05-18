@@ -16,14 +16,26 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('messages', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->text('text')->nullable();
-            $table->foreignIdFor(Message::class , 'forwarded_from_id')->nullable()->constrained('messages')->nullOnDelete();
-            $table->foreignIdFor(Message::class , 'reply_to_id')->nullable()->constrained('messages')->nullOnDelete();
-            $table->foreignIdFor(User::class)->constrained("users")->cascadeOnDelete();
-            $table->foreignIdFor(Conversation::class)->constrained("conversations")->cascadeOnDelete();
-            $table->foreignIdFor(File::class)->constrained("files")->cascadeOnDelete();
-            $table->boolean('is_read')->default(false);
+
+            $table->uuid('forwarded_from_id')->nullable();
+            $table->foreign('forwarded_from_id')->references('id')->on('messages')->cascadeOnDelete();
+
+            $table->uuid('replay_to_id')->nullable();
+            $table->foreign('replay_to_id')->references('id')->on('messages')->cascadeOnDelete();
+
+            $table->uuid('sender_id');
+            $table->foreign('sender_id')->references('id')->on('users')->cascadeOnDelete();
+
+            $table->uuid('conversation_id');
+            $table->foreign('conversation_id')->references('id')->on('conversations')->cascadeOnDelete();
+
+            $table->uuid('file_id')->nullable();
+            $table->foreign('file_id')->references('id')->on('files')->cascadeOnDelete();
+
+            $table->timestamp('read_at')->nullable();
+            $table->string('status')->default('sent');
             $table->softDeletes();
             $table->timestamps();
         });

@@ -13,10 +13,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_conversations', function (Blueprint $table) {
-            $table->id();
-            $table->foreignIdFor(Conversation::class)->constrained('conversations')->cascadeOnDelete();
-            $table->foreignIdFor(User::class)->constrained('users')->cascadeOnDelete();
+        Schema::create('conversation_user', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->uuid('conversation_id')->nullable();
+            $table->foreign('conversation_id')->references('id')->on('conversations')->cascadeOnDelete();
+            $table->uuid('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->string('role');
             $table->timestamps();
         });

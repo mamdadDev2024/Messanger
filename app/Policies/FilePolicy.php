@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\File;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class FilePolicy
 {
@@ -21,7 +20,7 @@ class FilePolicy
      */
     public function view(User $user, File $file): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +28,7 @@ class FilePolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -37,7 +36,7 @@ class FilePolicy
      */
     public function update(User $user, File $file): bool
     {
-        return false;
+        return $file->IsMine($user);
     }
 
     /**
@@ -45,7 +44,7 @@ class FilePolicy
      */
     public function delete(User $user, File $file): bool
     {
-        return false;
+        return $file->canDelete($user);
     }
 
     /**
@@ -53,7 +52,7 @@ class FilePolicy
      */
     public function restore(User $user, File $file): bool
     {
-        return false;
+        return $file->canDelete($user);
     }
 
     /**
@@ -61,6 +60,6 @@ class FilePolicy
      */
     public function forceDelete(User $user, File $file): bool
     {
-        return false;
+        return $file->canDelete($user);
     }
 }

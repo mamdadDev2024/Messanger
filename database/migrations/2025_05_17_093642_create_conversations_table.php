@@ -13,11 +13,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('conversations', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('name')->nullable();
             $table->string('token')->unique()->nullable();
             $table->text('bio')->nullable();
-            $table->foreignIdFor(File::class)->constrained("files")->cascadeOnDelete();
+            $table->uuid('file_id')->nullable();
+            $table->foreign('file_id')->references('id')->on('files')->cascadeOnDelete();
+            $table->uuid('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->json('settings');
             $table->json('details');
             $table->enum('type' , ['private' , 'group' , 'channel'])->default('private');

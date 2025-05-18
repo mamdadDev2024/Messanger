@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Message extends Model
 {
@@ -16,13 +17,39 @@ class Message extends Model
         'user_id',
         'conversation_id',
         'file_id',
-        'is_read'
+        'read_at',
+        'status'
     ];
 
-    protected $casts = [
-        'is_read' => "boolean"
-    ];
+    public $incrementing = false;
+    protected $keyType = 'string';
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (!$model->getKey()) {
+                $model->{$model->getKeyName()} = (string) Str::uuid();
+            }
+        });
+    }
+
+    public function accessToMessage(User $user)
+    {
+        return $this->conversation->participants->contains($user->id);
+    }
+
+    public function IsMine(User $user)
+    {
+        return $this->sender->id === $user->id;
+    }
+
+    public function canDelete(User $user)
+    {
+        return $this->IsMine($user) || in_array($user->id , $this->conversation->adminsId);
+    }
+    
     public function file()
     {
         return $this->belongsTo(File::class);
@@ -51,6 +78,11 @@ class Message extends Model
     public function replies()
     {
         return $this->hasMany(Message::class, 'reply_to_id');
+    }
+
+    public function conversation()
+    {
+        return $this->belongsTo(Conversation::class);
     }
 
     public function conversationType()

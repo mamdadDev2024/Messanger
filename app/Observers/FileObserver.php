@@ -4,6 +4,8 @@ namespace App\Observers;
 
 use App\Jobs\Message\ImageProccess;
 use App\Models\File;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class FileObserver
 {
@@ -12,8 +14,8 @@ class FileObserver
      */
     public function created(File $file): void
     {
-        if ($file->type == 'image') {
-            ImageProccess::dispatch($file);
+        if (str_starts_with($file->mime_type, 'image/')) {
+            ImageProccess::dispatch($file)->onQueue('predict');
         }
     }
 
@@ -22,7 +24,9 @@ class FileObserver
      */
     public function updated(File $file): void
     {
-        //
+        if ($file->wasChanged('class')) {
+            event(new \App\Events\Message\FileClassified($file));
+        }
     }
 
     /**
@@ -30,7 +34,15 @@ class FileObserver
      */
     public function deleted(File $file): void
     {
-        //
+        $path = public_path($file->url);
+
+        if (file_exists($path)) {
+            try {
+                unlink($path);
+            } catch (\Throwable $e) {
+                Log::error("Failed to delete file from public path: {$path}. Error: " . $e->getMessage());
+            }
+        }
     }
 
     /**
@@ -38,7 +50,9 @@ class FileObserver
      */
     public function restored(File $file): void
     {
-        //
+        if ($file->isImage()) {
+            ImageProccess::dispatch($file);
+        }
     }
 
     /**
@@ -46,6 +60,14 @@ class FileObserver
      */
     public function forceDeleted(File $file): void
     {
-        //
+        $disk = Storage::disk('public');
+
+        if ($disk->exists($file->url)) {
+            try {
+                $disk->delete($file->url);
+            } catch (\Throwable $e) {
+                Log::error("Failed to delete file from storage: {$file->url}. Error: " . $e->getMessage());
+            }
+        }
     }
 }
