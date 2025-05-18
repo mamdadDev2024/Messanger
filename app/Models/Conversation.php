@@ -23,7 +23,7 @@ class Conversation extends Model
     /** @use HasFactory<\Database\Factories\ConversationFactory> */
     use HasFactory , SoftDeletes;
 
-    protected $fillable = ["name","token","type","bio","settings","details","status",'file_id'];
+    protected $fillable = ["name","token","type","bio","settings","details","status","file_id","max_members"];
 
     public $incrementing = false;
     protected $keyType = 'string';
@@ -46,7 +46,7 @@ class Conversation extends Model
 
     public function owner()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function isOwner(User $user)
@@ -96,6 +96,21 @@ class Conversation extends Model
         return $this->users()->wherePivot('role', 'admin');
     }
 
+    public function members()
+    {
+        return $this->users()->wherePivot('role', 'member');
+    }
+
+    public function isAdmin(User $user)
+    {
+        return $this->admins()->where('user_id', $user->id)->exists();
+    }
+
+    public function isMember(User $user)
+    {
+        return $this->members()->where('user_id', $user->id)->exists();
+    }
+
     public function users()
     {
         return $this->belongsToMany(User::class, 'conversation_user')
@@ -105,6 +120,6 @@ class Conversation extends Model
 
     public function adminsId()
     {
-        $this->admins->plunk('id');
+        return $this->admins->pluck('id');
     }
 }

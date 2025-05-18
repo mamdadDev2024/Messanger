@@ -13,7 +13,8 @@ class ConversationController extends Controller
      */
     public function index()
     {
-        //
+        $conversations = auth()->user()->conversations()->with('users', 'messages')->get();
+        return response()->json($conversations);
     }
 
     /**
@@ -37,7 +38,8 @@ class ConversationController extends Controller
      */
     public function show(Conversation $conversation)
     {
-        //
+        $this->authorize('view', $conversation);
+        return response()->json($conversation->load('users', 'messages'));
     }
 
     /**

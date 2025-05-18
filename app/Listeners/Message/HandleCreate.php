@@ -8,6 +8,8 @@ use App\Models\Message;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
+use App\Events\Message\MessageSentRequest;
+use App\Events\Message\MessageSent;
 
 class HandleCreate implements ShouldQueue
 {
@@ -22,9 +24,11 @@ class HandleCreate implements ShouldQueue
     /**
      * Handle the event.
      */
-    public function handle(Sent $event): void
+    public function handle(MessageSentRequest $event): void
     {
-        Log::debug("On Lintener => " . $event->text ?? $event->conversation_id);
-        ActionsMessage::store($event);
+        // ذخیره پیام و فایل (در اکشن)
+        $message = ActionsMessage::store($event);
+        // دیسپچ رویداد Broadcast برای همه کاربران گفتگو
+        event(new MessageSent($message));
     }
 }

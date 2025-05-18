@@ -11,26 +11,41 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class Read
+class MessageReadRequest
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * Create a new event instance.
-     */
-    public function __construct(public string $conversation_type , public int $conversation_id , public int $message_id){
-        Log::debug('On Sent Event => ' . $conversation_id);
-    }
+    public function __construct(
+        public string $message_id,
+        public string $conversation_type,
+        public string $conversation_id,
+        public string $user_id
+    ) {}
+}
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
+class MessageRead implements ShouldBroadcast
+{
+    use Dispatchable, InteractsWithSockets, SerializesModels;
+
+    public function __construct(
+        public $message_id,
+        public $user_id,
+        public $conversation_type,
+        public $conversation_id
+    ) {}
+
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('conversation.'.$this->conversation_type.'.'.$this->conversation_id),
+            new PrivateChannel("message.{$this->conversation_type}.{$this->conversation_id}")
+        ];
+    }
+
+    public function broadcastWith(): array
+    {
+        return [
+            'message_id' => $this->message_id,
+            'user_id' => $this->user_id
         ];
     }
 }

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreign('conversation_id')->references('id')->on('conversations')->cascadeOnDelete();
             $table->uuid('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
-            $table->string('role');
+            $table->string('role')->default('member');
             $table->timestamps();
         });
     }

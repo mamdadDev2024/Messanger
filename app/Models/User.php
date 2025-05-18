@@ -41,7 +41,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'setting' => 'array'
+            'settings' => 'array'
         ];
     }
 
@@ -61,7 +61,7 @@ class User extends Authenticatable
 
     public function messages()
     {
-        $this->hasMany(Message::class);
+        return $this->hasMany(Message::class);
     }
 
     public function conversations()

@@ -14,11 +14,12 @@ class Message extends Model
 
     protected $fillable = [
         'text',
-        'user_id',
+        'sender_id',
         'conversation_id',
         'file_id',
-        'read_at',
-        'status'
+        'status',
+        'forwarded_from_id',
+        'reply_to_id',
     ];
 
     public $incrementing = false;
@@ -47,7 +48,7 @@ class Message extends Model
 
     public function canDelete(User $user)
     {
-        return $this->IsMine($user) || in_array($user->id , $this->conversation->adminsId);
+        return $this->IsMine($user) || in_array($user->id , $this->conversation->adminsId());
     }
     
     public function file()
@@ -57,7 +58,7 @@ class Message extends Model
 
     public function sender()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'sender_id');
     }
 
     public function forwardedFrom()
@@ -93,5 +94,17 @@ class Message extends Model
     public function hasFile()
     {
         return $this->file() && !empty($this->file()->url);
+    }
+
+    public function readers()
+    {
+        return $this->belongsToMany(User::class, 'message_user')
+            ->withPivot('read_at')
+            ->withTimestamps();
+    }
+
+    public function isReadBy(User $user)
+    {
+        return $this->readers()->where('user_id', $user->id)->whereNotNull('read_at')->exists();
     }
 }

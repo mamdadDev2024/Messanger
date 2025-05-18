@@ -19,7 +19,9 @@ class File extends Model
         'size',
         'class',
         'mime_type',
-        'original_name'
+        'original_name',
+        'metadata',
+        'user_id',
     ];
 
     protected function casts(){
@@ -42,6 +44,12 @@ class File extends Model
                 $model->{$model->getKeyName()} = (string) Str::uuid();
             }
         });
+
+        static::created(function ($file) {
+            if ($file->isImage()) {
+                $file->classifyImage();
+            }
+        });
     }
 
     public function message()
@@ -49,14 +57,19 @@ class File extends Model
         return $this->hasOne(Message::class);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function IsMine(User $user)
     {
-        return $this->sender->id === $user->id;
+        return $this->user_id === $user->id;
     }
 
     public function canDelete(User $user)
     {
-        return $this->IsMine($user) || in_array($user->id , $this->conversation->adminsId);
+        return $this->IsMine($user);
     }
     
     public function isImage()
@@ -85,16 +98,5 @@ class File extends Model
     public function classifyImage()
     {
         ImageProccess::dispatch($this);
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::created(function ($file) {
-            if ($file->isImage()) {
-                $file->classifyImage();
-            }
-        });
     }
 }

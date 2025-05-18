@@ -8,25 +8,38 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class Update implements ShouldBroadcast
+class MessageUpdateRequest
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * Create a new event instance.
-     */
-    public function __construct(public string $conversation_type , public int $conversation_id , public int $message_id){}
+    public function __construct(
+        public string $message_id,
+        public string $conversation_type,
+        public string $conversation_id,
+        public string $text,
+        public $file = null
+    ) {}
+}
 
+class MessageUpdated implements ShouldBroadcast
+{
+    use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
+    public function __construct(
+        public $message
+    ) {}
+
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel("message.$this->conversation_type.$this->conversation_id"),
+            new PrivateChannel("message.{$this->message['conversation_type']}.{$this->message['conversation_id']}")
+        ];
+    }
+
+    public function broadcastWith(): array
+    {
+        return [
+            'message' => $this->message
         ];
     }
 }

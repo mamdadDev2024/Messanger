@@ -9,26 +9,41 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class Sent implements ShouldBroadcast
+class MessageSentRequest
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * Create a new event instance.
-     */
-    public function __construct(public string|null $text , public string $conversation_type , public int $conversation_id , public int $user_id , public array|null $file , public $created_at){
-        Log::debug('On Sent Event => ' . $text ?? $conversation_id);
-    }
+    public function __construct(
+        public string $text,
+        public string $conversation_type,
+        public string $conversation_id,
+        public string $sender_id,
+        public array|null $file = null,
+        public $reply_to_id = null,
+        public $forwarded_from_id = null
+    ) {}
+}
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
+// رویداد Broadcast برای ارسال پیام به همه کاربران گفتگو
+class MessageSent implements ShouldBroadcast
+{
+    use Dispatchable, InteractsWithSockets, SerializesModels;
+
+    public function __construct(
+        public $message
+    ) {}
+
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel("message.$this->conversation_type.$this->conversation_id"),
+            new PrivateChannel("message.{$this->message['conversation_type']}.{$this->message['conversation_id']}")
+        ];
+    }
+
+    public function broadcastWith(): array
+    {
+        return [
+            'message' => $this->message
         ];
     }
 }

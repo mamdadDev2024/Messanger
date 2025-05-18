@@ -22,8 +22,8 @@ return new class extends Migration
             $table->uuid('forwarded_from_id')->nullable();
             $table->foreign('forwarded_from_id')->references('id')->on('messages')->cascadeOnDelete();
 
-            $table->uuid('replay_to_id')->nullable();
-            $table->foreign('replay_to_id')->references('id')->on('messages')->cascadeOnDelete();
+            $table->uuid('reply_to_id')->nullable();
+            $table->foreign('reply_to_id')->references('id')->on('messages')->cascadeOnDelete();
 
             $table->uuid('sender_id');
             $table->foreign('sender_id')->references('id')->on('users')->cascadeOnDelete();
@@ -34,9 +34,19 @@ return new class extends Migration
             $table->uuid('file_id')->nullable();
             $table->foreign('file_id')->references('id')->on('files')->cascadeOnDelete();
 
-            $table->timestamp('read_at')->nullable();
             $table->string('status')->default('sent');
             $table->softDeletes();
+            $table->timestamps();
+        });
+
+        // جدول واسط برای وضعیت خوانده‌شدن پیام‌ها توسط هر کاربر
+        Schema::create('message_user', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->uuid('message_id');
+            $table->foreign('message_id')->references('id')->on('messages')->cascadeOnDelete();
+            $table->uuid('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->timestamp('read_at')->nullable();
             $table->timestamps();
         });
     }

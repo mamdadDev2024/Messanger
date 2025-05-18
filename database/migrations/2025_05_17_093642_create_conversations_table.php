@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreign('file_id')->references('id')->on('files')->cascadeOnDelete();
             $table->uuid('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->integer('max_members')->nullable();
             $table->json('settings');
             $table->json('details');
             $table->enum('type' , ['private' , 'group' , 'channel'])->default('private');

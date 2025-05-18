@@ -5,6 +5,9 @@ namespace App\Listeners\Message;
 use App\Events\Message\Update;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use App\Events\Message\MessageUpdateRequest;
+use App\Events\Message\MessageUpdated;
+use App\Actions\Message as ActionsMessage;
 
 class HandleUpdate
 {
@@ -19,8 +22,9 @@ class HandleUpdate
     /**
      * Handle the event.
      */
-    public function handle(Update $event): void
+    public function handle(MessageUpdateRequest $event): void
     {
-        //
+        $message = ActionsMessage::update($event);
+        event(new MessageUpdated($message));
     }
 }

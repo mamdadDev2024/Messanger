@@ -15,16 +15,16 @@
             <!-- Desktop Navigation -->
             <div class="hidden lg:flex items-center gap-6 text-gray-700 dark:text-gray-300 text-base font-medium">
                 @auth
-                    <x-nav-link href="{{ url('/dashboard') }}" :active="request()->routeIs('dashboard')" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+                    <x-nav-link href="{{ url('/dashboard') }}" :active="request()->routeIs('dashboard')" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900 rounded">
                         <i class="fas fa-home mr-2"></i> داشبورد
                     </x-nav-link>
                 @else
-                    <x-nav-link href="{{ route('login') }}" :active="request()->routeIs('login')" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+                    <x-nav-link href="{{ route('login') }}" :active="request()->routeIs('login')" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900 rounded">
                         <i class="fas fa-sign-in-alt mr-2"></i> ورود
                     </x-nav-link>
 
                     @if (Route::has('register'))
-                        <x-nav-link href="{{ route('register') }}" :active="request()->routeIs('register')" class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded font-semibold">
+                        <x-nav-link href="{{ route('register') }}" :active="request()->routeIs('register')" class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900 rounded font-semibold">
                             <i class="fas fa-user-plus mr-2"></i> ثبت نام
                         </x-nav-link>
                     @endif
@@ -39,10 +39,10 @@
                 aria-label="باز و بسته کردن منوی موبایل"
                 class="lg:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors duration-200"
             >
-                <svg xmlns="http://www.w3.org/2000/svg" :class="{'hidden': isMobileMenuOpen, 'block': !isMobileMenuOpen}" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" :class="{ 'hidden': isMobileMenuOpen, 'block': !isMobileMenuOpen }" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
-                <svg xmlns="http://www.w3.org/2000/svg" :class="{'block': isMobileMenuOpen, 'hidden': !isMobileMenuOpen}" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" :class="{ 'block': isMobileMenuOpen, 'hidden': !isMobileMenuOpen }" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
@@ -50,24 +50,29 @@
 
         <!-- Mobile Menu -->
         <div 
-            x-show="isMobileMenuOpen" 
-            x-transition
+            x-show="isMobileMenuOpen"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 transform -translate-y-3"
+            x-transition:enter-end="opacity-100 transform translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 transform translate-y-0"
+            x-transition:leave-end="opacity-0 transform -translate-y-3"
             x-cloak
             id="mobile-menu"
-            class="lg:hidden bg-white dark:bg-gray-900 shadow-md rounded-b-md mt-2 py-4 px-6"
+            class="lg:hidden bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-md rounded-b-md mt-2 py-4 px-6"
         >
             <nav class="flex flex-col space-y-4 text-gray-700 dark:text-gray-300 text-base font-medium">
                 @auth
-                    <x-mobile-nav-link href="{{ url('/dashboard') }}" class="hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded transition-colors duration-200">
+                    <x-mobile-nav-link href="{{ url('/dashboard') }}" class="hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900 rounded transition-colors duration-200">
                         <i class="fas fa-home mr-3"></i> داشبورد
                     </x-mobile-nav-link>
                 @else
-                    <x-mobile-nav-link href="{{ route('login') }}" class="hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded transition-colors duration-200">
+                    <x-mobile-nav-link href="{{ route('login') }}" class="hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900 rounded transition-colors duration-200">
                         <i class="fas fa-sign-in-alt mr-3"></i> ورود
                     </x-mobile-nav-link>
 
                     @if (Route::has('register'))
-                        <x-mobile-nav-link href="{{ route('register') }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded font-semibold transition-colors duration-200">
+                        <x-mobile-nav-link href="{{ route('register') }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900 rounded font-semibold transition-colors duration-200">
                             <i class="fas fa-user-plus mr-3"></i> ثبت نام
                         </x-mobile-nav-link>
                     @endif

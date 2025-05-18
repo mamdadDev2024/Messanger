@@ -50,8 +50,6 @@ class Create extends Component
         // Make creator admin
         $conversation->participants()->updateExistingPivot(auth()->id(), ['is_admin' => true]);
 
-        $this->dispatch('conversationCreated');
-        $this->dispatch('close-modal', 'new-group');
     }
 
     public function render()

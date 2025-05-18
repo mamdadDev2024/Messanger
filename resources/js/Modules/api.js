@@ -1,4 +1,6 @@
 import { Config } from './config.js';
+import axios from 'axios';
+import { Events } from './events.js';
 
 export async function fetchConversations() {
   const res = await fetch(`${Config.apiBase}${Config.endpoints.conversations}`);
@@ -23,4 +25,32 @@ export async function markAsRead(messageId) {
     `${Config.apiBase}${Config.endpoints.readMessage(messageId)}`,
     { method: 'PATCH' }
   );
+}
+
+export async function sendMessageRequest(data) {
+  return axios.post('/broadcasting/message', {
+    event: Events.MessageSentRequest,
+    ...data
+  });
+}
+
+export async function updateMessageRequest(data) {
+  return axios.post('/broadcasting/message', {
+    event: Events.MessageUpdateRequest,
+    ...data
+  });
+}
+
+export async function deleteMessageRequest(data) {
+  return axios.post('/broadcasting/message', {
+    event: Events.MessageDeleteRequest,
+    ...data
+  });
+}
+
+export async function readMessageRequest(data) {
+  return axios.post('/broadcasting/message', {
+    event: Events.MessageReadRequest,
+    ...data
+  });
 }

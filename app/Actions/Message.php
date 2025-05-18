@@ -12,6 +12,7 @@ class Message
     public static function store($event)
     {
         $fileId = null;
+        $file = null;
         if ($event->file) {
             $file = self::upload($event->file);
             $fileId = $file->id;
@@ -20,11 +21,15 @@ class Message
         $message = MessageModel::create([
             'text' => $event->text,
             'conversation_id' => $event->conversation_id,
-            'type' => $event->conversation_type,
+            'sender_id' => $event->sender_id,
             'file_id' => $fileId,
+            'reply_to_id' => $event->reply_to_id,
+            'forwarded_from_id' => $event->forwarded_from_id,
+            'status' => 'sent',
         ]);
         Log::debug('On ActionMessage/store Fun => ' . $message->text);
 
+        return $message->toArray();
     }
 
     public static function upload($file)
@@ -36,5 +41,27 @@ class Message
             'url' => $path,
         ]);
         Log::debug('On ActionMessage/Upload Fun => ' . $file->url);
+    }
+
+    public static function update($event)
+    {
+        $message = MessageModel::findOrFail($event->message_id);
+        $fileId = $message->file_id;
+        if ($event->file) {
+            $file = self::upload($event->file);
+            $fileId = $file->id;
+        }
+        $message->update([
+            'text' => $event->text,
+            'file_id' => $fileId,
+            'status' => 'edited',
+        ]);
+        return $message->toArray();
+    }
+
+    public static function delete($event)
+    {
+        $message = MessageModel::findOrFail($event->message_id);
+        $message->delete();
     }
 }
